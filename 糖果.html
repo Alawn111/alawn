@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我在、一直在</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* 优化移动端触摸体验 */
+        .star, .close-btn {
+            touch-action: manipulation;
+        }
+
+        /* 优化星空背景 */
+        #stars-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, rgba(27, 39, 53, 0.1) 0%, rgba(9, 10, 15, 0.9) 100%);
+        }
+
+        .stars-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #stars-layer-1 { z-index: 1; }
+        #stars-layer-2 { z-index: 2; }
+        #stars-layer-3 { z-index: 3; }
+
+        /* 优化星星样式 */
+        .star {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 4;
+            filter: drop-shadow(0 0 3px currentColor);
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        /* 使用CSS clip-path创建五角星，性能更好 */
+        .star:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: currentColor;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            transform: scale(0.9);
+        }
+
+        /* 调整星星大小 */
+        .star.small { transform: scale(0.6); }
+        .star.medium { transform: scale(1); }
+        .star.large { transform: scale(1.5); }
+        .star.x-large { transform: scale(2); }
+
+        /* 移动端优化悬停效果 */
+        @media (hover: hover) {
+            .star:hover {
+                transform: scale(1.8);
+                filter: drop-shadow(0 0 10px currentColor);
+            }
+        }
+
+        .star.interactive {
+            animation: pulse 3s infinite alternate;
+        }
+
+        /* 星星颜色 */
+        .star.blue { color: #a8d0ff; }
+        .star.yellow { color: #fff4a8; }
+        .star.red { color: #ffa8a8; }
+        .star.white { color: #ffffff; }
+
+        /* 详情框优化 */
+        .star-detail {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 90%;
+            max-width: 500px;
+            background: rgba(5, 10, 20, 0.98);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 0 40px rgba(100, 150, 255, 0.4), inset 0 0 20px rgba(100, 150, 255, 0.15);
+            z-index: 100;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .star-detail.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .star-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .star-title {
+            font-size: 24px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #6ab3ff, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(106, 179, 255, 0.4);
+            line-height: 1.3;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .close-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.95);
+        }
+
+        @media (hover: hover) {
+            .close-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: rotate(90deg);
+            }
+        }
+
+        .star-content {
+            line-height: 1.6;
+            font-size: 16px;
+            color: #e0e0ff;
+            overflow-y: auto;
+            padding-right: 12px;
+            flex-grow: 1;
+        }
+
+        .star-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .star-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .star-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #6ab3ff, #a855f7);
+            border-radius: 10px;
+        }
+
+        .star-content p {
+            margin-bottom: 16px;
+        }
+
+        .star-icon {
+            margin-right: 8px;
+            color: #6ab3ff;
+        }
+
+        /* 覆盖层 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 动画 */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 0.2; }
+        }
+
+        .star.twinkle {
+            animation: twinkle 4s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 3px currentColor); }
+            100% { transform: scale(1.2); filter: drop-shadow(0 0 8px currentColor); }
+        }
+
+        .star.interactive.pulse {
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(5px, -10px); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10px, -20px); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(15px, -30px); }
+        }
+
+        /* 流星效果优化 */
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%);
+            transform: translateY(-50%);
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+            }
+            
+            .star-detail {
+                width: 95%;
+                padding: 20px;
+                max-height: 85vh;
+            }
+            
+            .star-title {
+                font-size: 22px;
+            }
+            
+            .star-content {
+                font-size: 15px;
+            }
+            
+            .star {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .star.x-large {
+                transform: scale(1.5);
+            }
+            
+            .star.large {
+                transform: scale(1.2);
+            }
+            
+            /* 减少移动端星星数量 */
+            .stars-layer .star {
+                transform: scale(0.7);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .star-detail {
+                padding: 16px;
+                border-radius: 12px;
+            }
+            
+            .star-title {
+                font-size: 20px;
+            }
+            
+            .star-header {
+                margin-bottom: 16px;
+                padding-bottom: 12px;
+            }
+            
+            .star-content {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+        }
+
+        /* 防止页面滚动 */
+        body.no-scroll {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- 星空背景层 -->
+    <div id="stars-background">
+        <div class="stars-layer" id="stars-layer-1"></div>
+        <div class="stars-layer" id="stars-layer-2"></div>
+        <div class="stars-layer" id="stars-layer-3"></div>
+    </div>
+    
+    <!-- 星星详细信息框 -->
+    <div class="star-detail" id="starDetail">
+        <div class="star-header">
+            <h2 class="star-title" id="starDetailTitle">星星信息</h2>
+            <button class="close-btn" id="closeDetail">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="star-content" id="starDetailContent">
+            <!-- 内容将通过JavaScript动态填充 -->
+        </div>
+    </div>
+    
+    <!-- 覆盖层 -->
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        // 检测移动设备
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // 星星数据 - 保持原始数据完整
+        const starsData = [
+            {
+                id: 1,
+                title: "早睡晚起",
+                content: `<p>晚上要早点休息哦，上洗手间要注意滑和撞到，好好休息第二天才能有精神哦</p>
+                <p>凌晨醒的早别乱想、少玩会手机哦，早点再睡一会哦</p>`,
+                color: "blue",
+                size: "x-large"
+            },
+            {
+                id: 2,
+                title: "你最重要",
+                content: `<p>通勤要注意安全哦，人多手机就收起来哦、有位置就坐呀，上下车都要注意点哦，你比什么都重要</p>`,
+                color: "white",
+                size: "x-large"
+            },
+            {
+                id: 3,
+                title: "遗憾",
+                content: `<p>唯一的遗憾是没能参与你的童年</p>
+                <p>所以，当你看到这条的时候能不能告诉我一些信息，也可以不说哦</p>
+                <p>想知道你的小学、中学、高中名(大学我知道哦)。然后还有你的家、你生活的地方</p>`,
+                color: "red",
+                size: "x-large"
+            },
+            {
+                id: 4,
+                title: "乖~",
+                content: `<p>中午都要好好休息哦，不聊天的话我也是关心关注你的哦。想让你每天都早早的休息</p>
+                <p>我在、也在想你哦</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 5,
+                title: "干杯~",
+                content: `<p>再忙也要记得喝水、休息哦，要去洗手间就及时去哦，事情慢慢处理哦</p>`,
+                color: "red",
+                size: "medium"
+            },
+            {
+                id: 6,
+                title: "真棒",
+                content: `<p>要记得坐姿哦，坐姿端正，你的腰和背都会舒服一点呢~</p>`,
+                color: "blue",
+                size: "medium"
+            },
+            {
+                id: 7,
+                title: "米修",
+                content: `<p>爱不一定要在一起。看到你笑我会开心、看到你难过我会难过、看到你皱眉，我会乱想、会想和你一起处理让你皱眉的事</p>
+                <p>你是一个人，喜怒哀乐都是正常的情绪，我只希望你难过的时候可以想到我，想到我希望你的难过可以少一点点</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 8,
+                title: "打你",
+                content: `<p>不许再问类似你之前是不是也为别人做过的话。为你做的都只为你做过，都是想为你做的</p>
+                <p>满心欢喜的为你准备礼物、怀着忐忑的心情找你。不管开心还是不开心，都是因为你。你是我最最最舍不得的人，也是我最最最重要的人</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 9,
+                title: "稳住~",
+                content: `<p>不管什么事情，都不要急、不要烦、不要生气哦。</p>
+                <p>哼，我偷偷骂那些让你不开心的人</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 10,
+                title: "摸摸",
+                content: `<p>有没有不舒服呀，要好好照顾自己哦、替所有爱你的人</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 11,
+                title: "心疼",
+                content: `<p>牙龈有疼吗，要多注意呀，上火的东西要少吃哦</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 12,
+                title: "抱抱",
+                content: `<p>累了就休息会哦，没关系哦，休息好了才能继续前进</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 13,
+                title: "傻瓜~",
+                content: `<p>要记得自己的日子哦，提前准备。不管做的好不好，都不许说自己蠢，我会心疼</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 14,
+                title: "自信哦",
+                content: `<p>在任何人前面都不需要自卑，你超级棒哦。不管在哪都是发着光的呢，要永远自信，永远开心哦，我的向日葵</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 15,
+                title: "唯一",
+                content: `<p>你从来都不像谁，也从来不是谁的替代品，你是唯一，你就是你，全世界唯一的你。我喜欢的你</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 16,
+                title: "我在",
+                content: `<p>我在哦，会在远一点点的地方关注着你、在意着你、喜欢着你哦</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 17,
+                title: "发光的你",
+                content: `<p>你是我黑夜中最亮的那颗星，我知道你在哦，你超级无敌宇宙第一好哦</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 18,
+                title: "好朋友",
+                content: `<p>不管什么身份，我只要你开心哦，会一直在哦，会一直陪着你哦</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 19,
+                title: "要开心哦",
+                content: `<p>不开心跟我说哦，我在</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 20,
+                title: "怀念",
+                content: `<p>我好想你啊</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 21,
+                title: "全世界最好的你",
+                content: `<p>别总怀疑你够不够好，你生来就带着宇宙的偏爱--值得被温柔对待，值得所有真诚的喜欢</p>
+                <p>配得感不是贪心，是对自己最基本的尊重</p>
+                <p>是你的、你想要的就去努力争取，永远不要让自己后悔</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 22,
+                title: "特别的你",
+                content: `<p>你很特别、也很重要，你真的超级无敌好哦，要相信我对你的好都是真心的哦，（づ￣3￣）づ╭❤～</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 23,
+                title: "小敏感",
+                content: `<p>如果我有做的什么让你不开心了，要及时告诉我哦，求求，一定要答应我</p>
+                <p>我会特别特别注意、会照顾到你的小敏感，要给你足够的安全感，哪怕作为朋友哦</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 24,
+                title: "入我心的你",
+                content: `<p>入了心的人没有那么容易忘记的</p>
+                <p>我会把这个爱藏在心里哦，以后不会再说爱哦，会真正的以朋友身份在你身边哦</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 25,
+                title: "彩蛋1",
+                content: `<p>2025-09-05</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 26,
+                title: "彩蛋2",
+                content: `<p>2025-11-30</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 27,
+                title: "终章",
+                content: `<p>元旦是新的开始哦，我的好朋友。我会按你说的做到，即使我想、你想我都会拒绝</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 28,
+                title: "彩蛋3",
+                content: `<p>1996年 农历 正月初八</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 29,
+                title: "最好的~",
+                content: `<p>最好听的两个字是郑潘</p>
+                <p>最好听的声音是你的笑声</p>
+                <p>最好看的风景是你如花如画的笑颜</p>`,
+                color: "blue",
+                size: "large"
+            },
+            {
+                id: 30,
+                title: "谢谢你",
+                content: `<p>谢谢你出现在我生命中并为我做了那么多那么多让我开心的事情，遇见你是我最幸运的事</p>`,
+                color: "blue",
+                size: "large"
+            }
+        ];
+
+        // 页面元素
+        const starsLayer1 = document.getElementById('stars-layer-1');
+        const starsLayer2 = document.getElementById('stars-layer-2');
+        const starsLayer3 = document.getElementById('stars-layer-3');
+        const starDetail = document.getElementById('starDetail');
+        const starDetailTitle = document.getElementById('starDetailTitle');
+        const starDetailContent = document.getElementById('starDetailContent');
+        const closeDetailBtn = document.getElementById('closeDetail');
+        const overlay = document.getElementById('overlay');
+
+        // 根据设备调整星星数量
+        const starConfig = {
+            layer1: isMobile ? 80 : 150,
+            layer2: isMobile ? 60 : 100,
+            layer3: isMobile ? 30 : 50
+        };
+
+        // 创建背景星星
+        function createBackgroundStars() {
+            // 第一层
+            for (let i = 0; i < starConfig.layer1; i++) {
+                createStarElement(starsLayer1, {
+                    size: 'small',
+                    colorClass: 'white',
+                    isInteractive: false,
+                    layer: 1
+                });
+            }
+            
+            // 第二层
+            for (let i = 0; i < starConfig.layer2; i++) {
+                createStarElement(starsLayer2, {
+                    size: Math.random() > 0.7 ? 'medium' : 'small',
+                    colorClass: Math.random() > 0.7 ? 'blue' : 'white',
+                    isInteractive: false,
+                    layer: 2
+                });
+            }
+            
+            // 第三层
+            for (let i = 0; i < starConfig.layer3; i++) {
+                createStarElement(starsLayer3, {
+                    size: Math.random() > 0.5 ? 'medium' : 'large',
+                    colorClass: Math.random() > 0.3 ? 'blue' : (Math.random() > 0.5 ? 'yellow' : 'white'),
+                    isInteractive: false,
+                    layer: 3
+                });
+            }
+        }
+
+        // 创建星星元素
+        function createStarElement(container, options) {
+            const star = document.createElement('div');
+            star.classList.add('star', options.size, options.colorClass);
+            
+            // 随机位置，避免边缘
+            star.style.left = `${5 + Math.random() * 90}%`;
+            star.style.top = `${5 + Math.random() * 90}%`;
+            
+            // 添加闪烁动画
+            star.classList.add('twinkle');
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            star.style.animationDuration = `${3 + Math.random() * 4}s`;
+            
+            // 添加漂浮动画
+            const floatAnimation = options.layer === 1 ? 'float1' : 
+                                 options.layer === 2 ? 'float2' : 'float3';
+            const duration = options.layer === 1 ? 20 : options.layer === 2 ? 15 : 10;
+            star.style.animation += `, ${floatAnimation} ${duration + Math.random() * 10}s infinite alternate`;
+            
+            container.appendChild(star);
+            return star;
+        }
+
+        // 创建可点击的信息星星
+        function createInteractiveStars() {
+            const gridPositions = [];
+            const cols = 6;
+            const rows = Math.ceil(starsData.length / cols);
+            
+            // 创建网格位置，避免重叠
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const x = (col + 0.5) / cols * 90 + 5;
+                    const y = (row + 0.5) / rows * 85 + 10;
+                    gridPositions.push({ x, y });
+                }
+            }
+            
+            // 打乱位置
+            gridPositions.sort(() => Math.random() - 0.5);
+            
+            starsData.forEach((starData, index) => {
+                const star = document.createElement('div');
+                star.classList.add('star', starData.size, starData.color, 'interactive', 'pulse');
+                star.dataset.id = starData.id;
+                
+                // 使用网格位置，避免重叠
+                const pos = gridPositions[index] || { x: 50, y: 50 };
+                star.style.left = `${pos.x}%`;
+                star.style.top = `${pos.y}%`;
+                
+                // 移动端优化：减小脉动效果
+                if (isMobile) {
+                    star.style.animationDuration = '3s';
+                }
+                
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                
+                // 添加点击事件
+                star.addEventListener('click', () => openStarDetail(starData));
+                
+                starsLayer3.appendChild(star);
+            });
+        }
+
+        // 创建流星效果
+        function createShootingStars() {
+            if (isMobile) {
+                // 移动端减少流星数量
+                setTimeout(createShootingStar, 3000);
+                setInterval(() => {
+                    if (Math.random() > 0.5) createShootingStar();
+                }, 20000);
+            } else {
+                // 桌面端正常效果
+                setTimeout(createShootingStar, 2000);
+                setInterval(createShootingStar, 10000 + Math.random() * 10000);
+            }
+        }
+
+        // 创建单个流星
+        function createShootingStar() {
+            const shootingStar = document.createElement('div');
+            shootingStar.classList.add('shooting-star');
+            
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 30;
+            
+            shootingStar.style.left = `${startX}%`;
+            shootingStar.style.top = `${startY}%`;
+            
+            const length = isMobile ? 60 + Math.random() * 80 : 100 + Math.random() * 200;
+            const angle = Math.random() * 30 + 20;
+            
+            shootingStar.style.opacity = '0';
+            
+            document.body.appendChild(shootingStar);
+            
+            // 使用Web Animations API，性能更好
+            shootingStar.animate([
+                { 
+                    opacity: 0,
+                    transform: `rotate(${angle}deg) translateX(0)`
+                },
+                { 
+                    opacity: 1,
+                    transform: `rotate(${angle}deg) translateX(${length/2}px)`
+                },
+                { 
+                    opacity: 0,
+                    transform: `rotate(${angle}deg) translateX(${length}px)`
+                }
+            ], {
+                duration: isMobile ? 800 : 1200 + Math.random() * 800,
+                easing: 'cubic-bezier(0.42, 0, 0.58, 1)'
+            }).onfinish = () => {
+                shootingStar.remove();
+            };
+        }
+
+        // 打开星星详情
+        function openStarDetail(starData) {
+            // 防止背景滚动
+            document.body.classList.add('no-scroll');
+            
+            starDetailTitle.textContent = starData.title;
+            starDetailContent.innerHTML = starData.content;
+            
+            // 设置颜色主题
+            let colorValue;
+            switch(starData.color) {
+                case 'blue': colorValue = '#6ab3ff'; break;
+                case 'yellow': colorValue = '#ffd166'; break;
+                case 'red': colorValue = '#ff6b6b'; break;
+                default: colorValue = '#ffffff'; break;
+            }
+            
+            starDetail.style.borderColor = `${colorValue}40`;
+            starDetail.style.boxShadow = `0 0 40px ${colorValue}40, inset 0 0 20px ${colorValue}20`;
+            
+            starDetail.classList.add('active');
+            overlay.classList.add('active');
+            
+            // 聚焦关闭按钮，便于键盘操作
+            closeDetailBtn.focus();
+        }
+
+        // 关闭星星详情
+        function closeStarDetail() {
+            document.body.classList.remove('no-scroll');
+            starDetail.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        // 初始化
+        function init() {
+            createBackgroundStars();
+            createInteractiveStars();
+            createShootingStars();
+            
+            // 事件监听
+            closeDetailBtn.addEventListener('click', closeStarDetail);
+            overlay.addEventListener('click', closeStarDetail);
+            
+            // 键盘支持
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && starDetail.classList.contains('active')) {
+                    closeStarDetail();
+                }
+            });
+            
+            // 移动端特定优化
+            if (isMobile) {
+                // 防止双击缩放
+                let lastTouchEnd = 0;
+                document.addEventListener('touchend', (e) => {
+                    const now = Date.now();
+                    if (now - lastTouchEnd <= 300) {
+                        e.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                }, { passive: false });
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
