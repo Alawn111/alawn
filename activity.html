@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>财务中心团建方案</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="white" opacity="0.05"/></svg>');
+            background-size: cover;
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            color: #1e40af;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dbeafe;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 12px;
+            background-color: #dbeafe;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            color: #1e293b;
+            font-weight: 500;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .department-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .department {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: #1e40af;
+            box-shadow: 0 3px 8px rgba(59, 130, 246, 0.15);
+            display: flex;
+            align-items: center;
+        }
+        
+        .department i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 20px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: #dbeafe;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+        }
+        
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 5px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #dbeafe;
+        }
+        
+        .timeline-time {
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-content {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .location-details {
+            display: flex;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .location-map {
+            flex: 1;
+            min-height: 200px;
+            background: linear-gradient(45deg, #e0f2fe 0%, #f0f9ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e40af;
+            font-weight: 600;
+        }
+        
+        .location-info {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .footer {
+            background-color: #1e293b;
+            color: #cbd5e1;
+            padding: 30px 40px;
+            text-align: center;
+            border-top: 1px solid #334155;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+        }
+        
+        .footer-note {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 15px;
+        }
+        
+        .highlight {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+        
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .budget-table th, .budget-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .budget-table th {
+            background-color: #eff6ff;
+            color: #1e40af;
+            font-weight: 600;
+        }
+        
+        .budget-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .budget-table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .total-row {
+            font-weight: 700;
+            color: #1e40af;
+            background-color: #eff6ff !important;
+        }
+        
+        /* 新增样式：可点击地点 */
+        .location-link {
+            color: #1e40af;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: 1px solid transparent;
+        }
+        
+        .location-link:hover {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        .location-link i {
+            margin-right: 8px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>财务中心团建方案</h1>
+            <p>为促进部门间协作交流，增强团队凝聚力，特组织财务部、数据IT部、物流部、计划部、账号部联合团建活动</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> 活动基本信息</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">活动主题</div>
+                        <div class="info-value">团队融合 · 高效协作</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">活动日期</div>
+                        <div class="info-value">2026年02月04日（周三晚上）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">集合时间</div>
+                        <div class="info-value">晚上 19:30</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">活动地点</div>
+                        <div class="info-value">富豪酒楼（龙岗店）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">参与人数</div>
+                        <div class="info-value">19人</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">活动负责人</div>
+                        <div class="info-value">郑潘 (18617107090)</div>
+                    </div>
+                </div>
+                
+                <h3 class="section-title" style="margin-top: 30px; font-size: 1.3rem;"><i class="fas fa-users"></i> 参与部门</h3>
+                <div class="department-list">
+                    <div class="department"><i class="fas fa-calculator"></i> 财务部 (6人)</div>
+                    <div class="department"><i class="fas fa-database"></i> 数据IT部 (3人)</div>
+                    <div class="department"><i class="fas fa-truck"></i> 物流部 (6人)</div>
+                    <div class="department"><i class="fas fa-calendar-alt"></i> 计划部 (2人)</div>
+                    <div class="department"><i class="fas fa-calendar-alt"></i> 账号组 (2人)</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title"><i class="fas fa-map-marked-alt"></i> 活动地点详情</h2>
+                <div class="location-details">
+                    <div class="location-map">
+                        <div style="text-align: center;">
+                            <i class="fas fa-map-pin" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            <div>干饭地点：</div>
+                            <div style="font-size: 0.9rem; margin-top: 5px;">
+                                <a href="https://surl.amap.com/d6CKne6j7WZ" target="_blank" class="location-link">
+                                    <i class="fas fa-external-link-alt"></i>富豪酒楼（龙岗店）：龙岗区富安大道185号
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="location-details">
+                    <div class="location-map">
+                        <div style="text-align: center;">
+                            <i class="fas fa-map-pin" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            <div>嗨皮地点：</div>
+                            <div style="font-size: 0.9rem; margin-top: 5px;">
+                                <a href="https://surl.amap.com/dcDNqgC80Fh" target="_blank" class="location-link">
+                                    <i class="fas fa-external-link-alt"></i>星聚会KTV（龙岗万达店）：华南二道龙岗万达广场内4F次主1（1号门）
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title"><i class="fas fa-list-ol"></i> 活动流程安排</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">19:00 - 19:30</div>
+                        <div class="timeline-content">
+                            <strong>集合</strong> - 富豪酒楼集合
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">19:30 - 20:30</div>
+                        <div class="timeline-content">
+                            <strong>晚餐时间</strong> - "富豪酒楼（龙岗店）"
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">20:30 - 20:40</div>
+                        <div class="timeline-content">
+                            <strong>转场时间</strong> - 前往附近KTV，步行约11分钟
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">20:40 - 22:30</div>
+                        <div class="timeline-content">
+                            <strong>KTV欢唱</strong> - "星聚会KTV（龙岗万达店）"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><i class="fas fa-handshake" style="margin-right: 8px;"></i> 让我们携手共进，共创高效协作的团队！</p>
+            <p>活动负责人：郑潘 18617107090 </p>
+            <p style="color: #af1e2a; font-weight: bold; margin: 0; text-align: center;">
+                特别鸣谢：衷心感谢物流部为本次团建活动提供全额资金支持！
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 为部门卡片添加点击效果
+        document.querySelectorAll('.department').forEach(dept => {
+            dept.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+        
+        // 为时间线添加动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, 300 + (index * 200));
+            });
+            
+            // 为可点击地点添加交互效果
+            document.querySelectorAll('.location-link').forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.querySelector('i').style.transform = 'rotate(45deg)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.querySelector('i').style.transform = 'rotate(0deg)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
